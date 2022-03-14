@@ -1,4 +1,4 @@
-package com.example.Bot.Model;
+package com.example.bot.model;
 
 import lombok.Data;
 

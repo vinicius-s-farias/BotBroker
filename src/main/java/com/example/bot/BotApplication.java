@@ -1,4 +1,4 @@
-package com.example.Bot;
+package com.example.bot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,14 +14,7 @@ public class BotApplication {
 		SpringApplication.run(BotApplication.class, args);
 	}
 
-//	@Bean
-//
-//	public WebClient webClientUser(WebClient.Builder builder) {
-//		return builder
-//				.baseUrl("http://localhost:8081")
-//				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-//				.build();
-//	}
+
 	@Bean
 	public WebClient webClienStock(WebClient.Builder builder) {
 		return builder
