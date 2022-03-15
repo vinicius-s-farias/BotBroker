@@ -1,12 +1,11 @@
-package com.example.Bot.Service;
+package com.example.bot.service;
 
-import com.example.Bot.Model.Stock;
-import com.example.Bot.Model.UserOrder;
+import com.example.bot.model.Stock;
+import com.example.bot.model.UserOrder;
 
-import com.example.Bot.Model.UserWallet;
 import com.nimbusds.jose.shaded.json.JSONObject;
 
-import com.example.Bot.Model.User;
+import com.example.bot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
@@ -27,6 +26,7 @@ public class UserOrdemService {
 
     @Autowired
     private WebClient webClientStock;
+    private Random gerador = new Random();
 
     private final WebClient webClientUser;
     public UserOrdemService (WebClient.Builder builder){
@@ -35,29 +35,28 @@ public class UserOrdemService {
 
 
     public UserOrder postORder(@RequestHeader("Authorization") String token) {
-        Random gerador = new Random();
+
         int a = gerador.nextInt(getUSer(token).size());
         int b = gerador.nextInt(getStock(token).size());
-        Long id_user = getUSer(token).get(a).getId();
-        Long id_stock = getStock(token).get(b).getId();
+        Long idUser = getUSer(token).get(a).getId();
+        Long idStock = getStock(token).get(b).getId();
         int volume = gerador.nextInt(1, 200);
         int type = gerador.nextInt(0, 2 );
         if(type == 1){
-            CriarWallet(token, id_user, id_stock, getStock(token).get(b).getStock_name(),getStock(token).get(b).getStock_symbol(), volume);
+            criarWallet(token, idUser, idStock, getStock(token).get(b).getStockName(),getStock(token).get(b).getStockSymbol(), volume);
 
         }
         Double price = Math.round(gerador.nextDouble(10, 500)  * 100.00 ) / 100.00;
         JSONObject json = new JSONObject();
-        json.put("id_user", id_user);
-        json.put("id_stock",id_stock );
-        json.put("stock_name", getStock(token).get(b).getStock_name());
-        json.put("stock_symbol", getStock(token).get(b).getStock_symbol());
+        json.put("id_user", idUser);
+        json.put("id_stock",idStock );
+        json.put("stock_name", getStock(token).get(b).getStockName());
+        json.put("stock_symbol", getStock(token).get(b).getStockSymbol());
         json.put("volume", volume);
         json.put("price", price );
         json.put("type", type);
         json.put("status",1 );
         json.put("remaining_value", volume);
-        System.out.println(json);
         Mono<UserOrder> monoStock =
                 this.webClientUser
                         .post()
@@ -66,8 +65,8 @@ public class UserOrdemService {
                         .body(BodyInserters.fromValue(json))
                         .retrieve()
                         .bodyToMono(UserOrder.class);
-        UserOrder order = monoStock.block();
-        return order;
+
+        return monoStock.block();
     }
 
 
@@ -82,13 +81,13 @@ public class UserOrdemService {
         return Arrays.stream(monoStock.block()).toList();
     }
 
-    public void CriarWallet (String token, Long id_user, Long id_stock, String stock_name, String stock_symbol, int volume){
-        System.out.println(id_user + " " + " " + id_stock + " " + " " + stock_name + " " + " " + stock_symbol + " " + " " + volume);
+    public void criarWallet (String token, Long idUser, Long idStock, String stockName, String stockSymbol, int volume){
+
         JSONObject json = new JSONObject();
-        json.put("id_user", id_user);
-        json.put("id_stock", id_stock);
-        json.put("stock_name", stock_name);
-        json.put("stock_symbol",  stock_symbol);
+        json.put("id_user", idUser);
+        json.put("id_stock", idStock);
+        json.put("stock_name", stockName);
+        json.put("stock_symbol",  stockSymbol);
         json.put("volume", volume);
                 this.webClientUser
                         .post()
